@@ -1,0 +1,143 @@
+<!doctype html><head>
+	
+	<title>迷路自動生成</title>
+	
+</head><body bgcolor="#ffffbf" text="#000000" alink="#0000ff" vlink="#7f007f"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<h1>迷路自動生成</h1>
+	
+	<form name="form1">Width : <input type="number" name="number1" value="20" max="1000"></form>
+	<form name="form2">Height : <input type="number" name="number2" value="20" max="1000"></form>
+	<input type="button" value="生成" onclick="clickBtn()"><br>
+	<br>
+	
+	<div id="maze"></div>
+	<script type="text/javascript">
+	<!--
+		function clickBtn() {
+			
+			const number1 = document.form1.number1;
+			const number2 = document.form2.number2;
+			
+			let Height = number2.value * 2 + 1, Width = number1.value * 2 + 1;
+			let PlayerX = 1, PlayerY = 1;
+			let map = new Array(Height);
+			for (let i = 0; i < Height; i++) {
+				map[i] = new Array(Width);
+				map[i].fill(1);
+			}
+			
+			// 範囲指定乱数
+			const randRange = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+			
+			// 壁掘り法
+			//for (let i = 0; i < Height; i++) for (let j = 0; j < Width; j++) map[i][j] = 1;
+			let FirstX = randRange(0, Math.floor(Width / 2) - 1) * 2 + 1;
+			let FirstY = randRange(0, Math.floor(Height / 2) - 1) * 2 + 1;
+			map[FirstY][FirstX] = 0;
+			while (true) {
+				let Dir = randRange(0, 3);
+				// 行きずまってたら
+				if (	Dir === 0 && (FirstY === 1 || map[FirstY - 2][FirstX] === 0) ||
+					Dir === 1 && (FirstY === Height - 2 || map[FirstY + 2][FirstX] === 0) ||
+					Dir === 2 && (FirstX === 1 || map[FirstY][FirstX - 2] === 0) ||
+					Dir === 3 && (FirstX === Width - 2 || map[FirstY][FirstX + 2] === 0)
+				) {
+					// 完成判定
+					let flag = 1;
+					for (let i = 0; i < Math.floor(Height / 2); i++) for (let j = 0; j < Math.floor(Width / 2); j++) {
+						if (map[i * 2 + 1][j * 2 + 1] === 1) flag = 0;
+					}
+					if (flag === 1) break;
+					// 次の場所を探す
+					do {
+						FirstX = randRange(0, Math.floor(Width / 2) - 1) * 2 + 1;
+						FirstY = randRange(0, Math.floor(Height / 2) - 1) * 2 + 1;
+					} while (map[FirstY][FirstX] === 1);
+					map[FirstY][FirstX] = 0;
+				// 進める
+				} else {
+					switch (Dir) {
+					case 0:
+						map[FirstY - 1][FirstX] = 0;
+						map[FirstY - 2][FirstX] = 0;
+						FirstY -= 2;
+						break;
+					case 1:
+						map[FirstY + 1][FirstX] = 0;
+						map[FirstY + 2][FirstX] = 0;
+						FirstY += 2;
+						break;
+					case 2:
+						map[FirstY][FirstX - 1] = 0;
+						map[FirstY][FirstX - 2] = 0;
+						FirstX -= 2;
+						break;
+					case 3:
+						map[FirstY][FirstX + 1] = 0;
+						map[FirstY][FirstX + 2] = 0;
+						FirstX += 2;
+						break;
+					}
+				}
+			}
+			// ごおる、すたあとづけ
+			map[Height - 2][Width - 2] = 2;
+			map[1][1] = 3;
+			
+			// 描画
+			let output = "<table border=\"0\" cellspacing=\"0\">";
+			for (let i = 0; i < Height; i++) {
+				output += "<tr>";
+				for (let j = 0; j < Width; j++) {
+					switch (map[i][j]) {
+					case 0:
+						output += "<td bgcolor=\"ffffff\" width=\"";
+						if (j % 2 === 0) output += "4";
+						else output += "20";
+						output += "\" height=\"";
+						if (i % 2 === 0) output += "4";
+						else output += "20";
+						output += "\"></td>";
+						break;
+					case 1:
+						output += "<td bgcolor=\"000000\" width=\"";
+						if (j % 2 === 0) output += "4";
+						else output += "20";
+						output += "\" height=\"";
+						if (i % 2 === 0) output += "4";
+						else output += "20";
+						output += "\"></td>";
+						break;
+					case 2:
+						output += "<td bgcolor=\"ff0000\" width=\"";
+						if (j % 2 === 0) output += "4";
+						else output += "20";
+						output += "\" height=\"";
+						if (i % 2 === 0) output += "4";
+						else output += "20";
+						output += "\"><font size=\"3\">Ｇ</font></td>";
+						break;
+					case 3:
+						output += "<td bgcolor=\"ffff00\" width=\"";
+						if (j % 2 === 0) output += "4";
+						else output += "20";
+						output += "\" height=\"";
+						if (i % 2 === 0) output += "4";
+						else output += "20";
+						output += "\"><font size=\"3\">Ｓ</font></td>";
+						break;
+					}
+				}
+				output += "</tr>";
+			}
+			output += "</table><br>";
+			var maze = document.getElementById('maze');
+			maze.innerHTML = output;
+			
+		}
+		
+	//--> JavaScriptを有効にしてください。
+	</script>
+	
+</body></html>
